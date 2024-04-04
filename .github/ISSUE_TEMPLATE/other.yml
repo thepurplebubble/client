@@ -4,7 +4,7 @@ title: "[OTHER] - "
 labels: ["🔒 staff only", "🚦 status: awaiting triage", "🧹 status: ticket work required"]
 projects: ["thepurplebubble/1", "thepurplebubble/3"]
 assignees:
-  - jdogcoder
+  - aramshiva
 body:
   - type: markdown
     attributes:
