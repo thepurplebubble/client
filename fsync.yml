@@ -23,7 +23,7 @@ files:
   - path: /.github/AUTHORS.md
     source: https://github.com/thepurplebubble/template/blob/main/.github/AUTHORS.md
   - path: /.github/ACKNOWLEDGEMENTS.md
-    source: https://github.com/thepurplebubble/template/blob/main/.github/ACKNOWLEDGEMENTS.md
+    source: https://github.com/thepurplebubble/template/blob/main/.github/ACKNOWLEDGMENTS.md
   # issue templates
   - path: /.github/ISSUE_TEMPLATE/bugreport.yml
     source: https://github.com/thepurplebubble/template/blob/main/.github/ISSUE_TEMPLATE/bugreport.yml
