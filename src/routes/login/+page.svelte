@@ -3,11 +3,17 @@
 	import { goto } from '$app/navigation';
 
 	import { clientStore } from '$lib/client-store';
+	import { onMount } from 'svelte';
 
 	let client = null;
 	let homeserver = '';
 	let username = '';
 	let password = '';
+
+	onMount(() => {
+		homeserver = localStorage.getItem('homeserver') ?? '';
+		username = localStorage.getItem('username') ?? '';
+	});
 </script>
 
 <h1>Purple Bubble - Login</h1>
@@ -35,7 +41,16 @@
 
 		await client.login('m.login.password', { user: username, password });
 
-		console.log('Logged in');
+		if (client.isLoggedIn()) {
+			console.log('Logged in');
+		} else {
+			console.log('Failed to log in');
+			return;
+		}
+
+		localStorage.setItem('homeserver', homeserver);
+		localStorage.setItem('username', username);
+		sessionStorage.setItem('token', client.getAccessToken() ?? '');
 
 		client.startClient();
 
