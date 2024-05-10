@@ -50,7 +50,9 @@
 
 		localStorage.setItem('homeserver', homeserver);
 		localStorage.setItem('username', username);
-		sessionStorage.setItem('token', client.getAccessToken() ?? '');
+		sessionStorage.setItem('access_token', client.getAccessToken() ?? '');
+		sessionStorage.setItem('refresh_token', client.getRefreshToken() ?? '');
+		sessionStorage.setItem('userId', client.getUserId() ?? '');
 
 		client.startClient();
 

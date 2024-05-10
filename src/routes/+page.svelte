@@ -4,14 +4,16 @@
 	import { onMount } from 'svelte';
 	import * as sdk from 'matrix-js-sdk';
 
-	onMount(() => {
+	onMount(async () => {
 		if (!$clientStore) {
-			const token = sessionStorage.getItem('token');
+			const accessToken = sessionStorage.getItem('access_token');
 			const homeserver = localStorage.getItem('homeserver');
-			if (token && homeserver) {
+			const userId = sessionStorage.getItem('userId') ?? undefined;
+			if (accessToken && homeserver) {
 				const client = sdk.createClient({
 					baseUrl: homeserver,
-					accessToken: token
+					accessToken,
+					userId
 				});
 
 				client.startClient();
@@ -27,6 +29,18 @@
 </script>
 
 <h1>Purple Bubble - {$clientStore?.getHomeserverUrl() ?? 'Not Logged In'}</h1>
+<p>Account - {$clientStore?.getUserId() ?? 'Not Logged In'}</p>
+<button
+	on:click={() => {
+		$clientStore?.logout().then(() => {
+			clientStore.set(null);
+			sessionStorage.removeItem('access_token');
+			sessionStorage.removeItem('refresh_token');
+			sessionStorage.removeItem('userId');
+			goto('/login');
+		});
+	}}>Logout</button
+>
 {#await $clientStore?.getJoinedRooms()}
 	<p>Loading...</p>
 {:then rooms}
