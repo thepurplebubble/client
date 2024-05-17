@@ -8,6 +8,10 @@
 	const roomID = $page.params.room;
 	let room: sdk.Room | null = null;
 
+	let timeline: sdk.MatrixEvent[] = [];
+
+	let message = '';
+
 	onMount(async () => {
 		await fetchClient().catch(() => {
 			goto('/login');
@@ -24,6 +28,14 @@
 				throw new Error('Failed to load room');
 			}
 		}
+
+		$clientStore?.on(sdk.RoomEvent.Timeline, (event) => {
+			if (event.getRoomId() === roomID) {
+				timeline = room?.getLiveTimeline().getEvents() ?? [];
+			}
+		});
+
+		timeline = room?.getLiveTimeline().getEvents() ?? [];
 	});
 </script>
 
@@ -33,12 +45,21 @@
 	<h1>Room - {room.name}</h1>
 {/if}
 
-{#each room?.getLiveTimeline().getEvents() ?? [] as event}
+{#each timeline ?? [] as event}
 	{#if event.getType() === 'm.room.message'}
-		<p><strong>{event.getSender()}:</strong> {event.getContent().body}</p>
+		{@const user = $clientStore?.getUser(event.getSender() ?? '')}
+		<p><strong>{user?.displayName}:</strong> {event.getContent().body}</p>
 	{:else if event.getType() === 'm.room.member'}
 		<p><strong>{event.getStateKey()}</strong> {event.getContent().membership}</p>
 	{:else}
 		<p><i>{event.getType()}</i></p>
 	{/if}
 {/each}
+
+<input type="text" placeholder="Message" bind:value={message} />
+<button
+	on:click={() => {
+		$clientStore?.sendTextMessage(roomID, message);
+		message = '';
+	}}>Send</button
+>
