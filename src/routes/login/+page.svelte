@@ -2,7 +2,7 @@
 	import * as sdk from 'matrix-js-sdk';
 	import { goto } from '$app/navigation';
 
-	import { clientStore } from '$lib/client-store';
+	import { clientStore, fetchClient } from '$lib/client';
 	import { onMount } from 'svelte';
 
 	let client = null;
@@ -11,8 +11,14 @@
 	let password = '';
 
 	onMount(() => {
-		homeserver = localStorage.getItem('homeserver') ?? '';
-		username = localStorage.getItem('username') ?? '';
+		fetchClient()
+			.then(() => {
+				goto('/');
+			})
+			.catch(() => {
+				homeserver = localStorage.getItem('homeserver') ?? '';
+				username = localStorage.getItem('username') ?? '';
+			});
 	});
 </script>
 
