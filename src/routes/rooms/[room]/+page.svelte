@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import * as sdk from 'matrix-js-sdk';
 	import { clientStore, fetchClient } from '$lib/client';
 	import { page } from '$app/stores';
@@ -8,6 +8,7 @@
 	const roomID = $page.params.room;
 	let room: sdk.Room | null = null;
 
+	let listener: (event: sdk.MatrixEvent) => void;
 	let timeline: sdk.MatrixEvent[] = [];
 
 	let message = '';
@@ -29,13 +30,19 @@
 			}
 		}
 
-		$clientStore?.on(sdk.RoomEvent.Timeline, (event) => {
+		listener = (event: sdk.MatrixEvent) => {
 			if (event.getRoomId() === roomID) {
 				timeline = room?.getLiveTimeline().getEvents() ?? [];
 			}
-		});
+		};
+
+		$clientStore?.on(sdk.RoomEvent.Timeline, listener);
 
 		timeline = room?.getLiveTimeline().getEvents() ?? [];
+	});
+
+	onDestroy(() => {
+		$clientStore?.removeListener(sdk.RoomEvent.Timeline, listener);
 	});
 </script>
 
