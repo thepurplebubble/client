@@ -60,6 +60,8 @@
 	<h1>Room - {room.name}</h1>
 {/if}
 
+<a href="/">Home</a>
+
 {#each timeline ?? [] as event}
 	{#if event.getType() === 'm.room.message'}
 		{@const user = $clientStore?.getUser(event.getSender() ?? '')}
