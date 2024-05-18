@@ -46,6 +46,14 @@
 	});
 </script>
 
+<svelte:head>
+	{#if !room}
+		<title>Purple Bubble</title>
+	{:else}
+		<title>Purple Bubble - {room.name}</title>
+	{/if}
+</svelte:head>
+
 {#if !room}
 	<p>Loading...</p>
 {:else}

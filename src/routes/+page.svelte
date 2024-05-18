@@ -18,6 +18,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Purple Bubble</title>
+</svelte:head>
+
 <h1>Purple Bubble - {$clientStore?.getUserId() ?? 'Not Logged In'}</h1>
 <h2>Rooms</h2>
 <ul>

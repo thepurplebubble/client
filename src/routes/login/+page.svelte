@@ -22,6 +22,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Purple Bubble - Login</title>
+</svelte:head>
+
 <h1>Purple Bubble - Login</h1>
 <label>
 	Homeserver
