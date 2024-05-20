@@ -10,6 +10,7 @@
 
 	let listener: (event: sdk.MatrixEvent) => void;
 	let timeline: sdk.MatrixEvent[] = [];
+	let topic = '';
 
 	let message = '';
 
@@ -39,6 +40,11 @@
 		$clientStore?.on(sdk.RoomEvent.Timeline, listener);
 
 		timeline = room?.getLiveTimeline().getEvents() ?? [];
+		topic = room
+			.getLiveTimeline()
+			.getState(sdk.EventTimeline.FORWARDS)
+			?.getStateEvents('m.room.topic', '')
+			?.getContent().topic;
 	});
 
 	onDestroy(() => {
@@ -58,25 +64,28 @@
 	<p>Loading...</p>
 {:else}
 	<h1>Room - {room.name}</h1>
+	<p>Topic: {topic}</p>
 {/if}
 
 <a href="/">Home</a>
 
-{#each timeline ?? [] as event}
-	{#if event.getType() === 'm.room.message'}
-		{@const user = $clientStore?.getUser(event.getSender() ?? '')}
-		<p><strong>{user?.displayName}:</strong> {event.getContent().body}</p>
-	{:else if event.getType() === 'm.room.member'}
-		<p><strong>{event.getStateKey()}</strong> {event.getContent().membership}</p>
-	{:else}
-		<p><i>{event.getType()}</i></p>
-	{/if}
-{/each}
+{#if room}
+	{#each timeline ?? [] as event}
+		{#if event.getType() === 'm.room.message'}
+			{@const user = $clientStore?.getUser(event.getSender() ?? '')}
+			<p><strong>{user?.displayName}:</strong> {event.getContent().body}</p>
+		{:else if event.getType() === 'm.room.member'}
+			<p><strong>{event.getStateKey()}</strong> {event.getContent().membership}</p>
+		{:else}
+			<p><i>{event.getType()}</i></p>
+		{/if}
+	{/each}
 
-<input type="text" placeholder="Message" bind:value={message} />
-<button
-	on:click={() => {
-		$clientStore?.sendTextMessage(roomID, message);
-		message = '';
-	}}>Send</button
->
+	<input type="text" placeholder="Message" bind:value={message} />
+	<button
+		on:click={() => {
+			$clientStore?.sendTextMessage(roomID, message);
+			message = '';
+		}}>Send</button
+	>
+{/if}
