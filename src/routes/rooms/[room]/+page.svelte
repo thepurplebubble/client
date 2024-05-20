@@ -11,6 +11,7 @@
 	let listener: (event: sdk.MatrixEvent) => void;
 	let timeline: sdk.MatrixEvent[] = [];
 	let topic = '';
+	let avatarURL: string | null = null;
 
 	let message = '';
 
@@ -45,6 +46,7 @@
 			.getState(sdk.EventTimeline.FORWARDS)
 			?.getStateEvents('m.room.topic', '')
 			?.getContent().topic;
+		avatarURL = room?.getAvatarUrl($clientStore?.getHomeserverUrl() ?? '', 128, 128, 'scale');
 	});
 
 	onDestroy(() => {
@@ -60,11 +62,17 @@
 	{/if}
 </svelte:head>
 
+{#if avatarURL}
+	<img alt="Room avatar URL" src={avatarURL} />
+{/if}
+
 {#if !room}
 	<p>Loading...</p>
 {:else}
 	<h1>Room - {room.name}</h1>
-	<p>Topic: {topic}</p>
+	{#if topic}
+		<p>Topic: {topic}</p>
+	{/if}
 {/if}
 
 <a href="/">Home</a>
